@@ -1,0 +1,13 @@
+{
+  "name": "@net-sim/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "dev": "tsx src/index.ts", "build": "tsc", "typecheck": "tsc --noEmit" },
+  "dependencies": {
+    "@net-sim/contracts": "*",
+    "@net-sim/sim-core": "*",
+    "fastify": "^4.28.1", "ws": "^8.18.0"
+  },
+  "devDependencies": { "@types/ws": "^8.5.13", "tsx": "^4.19.2" }
+}
