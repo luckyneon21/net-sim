@@ -17,10 +17,10 @@
 
 ## chief (sim-core + contracts)
 - [x] Монорепо-скелет, npm workspaces, docker-compose — **готово**
-- [x] contracts базовые типы (Snapshot, Action, WS messages) — **готово**
+- [x] contracts v1 — **готово** (VLAN, DHCP, NAT, ACL, OSPF, topology presets)
 - [x] TEAM-CHARTER + PROMPT-00/01/02 загружены в `docs/` — **готово**
-- [ ] contracts v1 финал (полный набор Action, схемы валидации) — в процессе
+- [x] Топологии L1/L2/L3 (JSON presets + PNG diagrams) — **готово**
 - [ ] sim-core спринт 1 (ARP+ICMP, MAC-таблицы, golden-master harness) — в процессе
 
 ## Вердикт chief
-- **2026-11-20**: Инфраструктура развёрнута. Ветки `sub-a/bootstrap` и `sub-b/bootstrap` созданы. Промпты и хартия доступны в `docs/prompts/` и `docs/TEAM-CHARTER.md`. Оба помощника могут начинать работу в своих ветках. Я (chief) дорабатываю contracts до v1 и начинаю sim-core спринт 1. Ожидаю первые PR от sub-A и sub-B после финальных contracts.
+- **2026-11-20**: Contracts v1 финализированы. Топологии продуманы и задокументированы в `docs/topologies/` (L1-Classroom.json, L2-Office.json, L3-Enterprise.json). **Оба помощника могут начинать работу.** sub-A имеет полные типы для Canvas-рендера. sub-B имеет полные типы для Gateway/Worker. Ожидаю первые PR.
