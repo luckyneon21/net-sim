@@ -1,0 +1,55 @@
+{
+  "name": "Office Network",
+  "level": 2,
+  "description": "Офисная сеть с несколькими VLAN, DHCP, DNS, NAT, RIP",
+  "devices": [
+    {"id": "eng1", "kind": "host", "label": "ENG1", "x": 100, "y": 80, "ips": ["10.0.10.11/24"], "vlan": 10},
+    {"id": "eng2", "kind": "host", "label": "ENG2", "x": 200, "y": 80, "ips": ["10.0.10.12/24"], "vlan": 10},
+    {"id": "eng3", "kind": "host", "label": "ENG3", "x": 300, "y": 80, "ips": ["10.0.10.13/24"], "vlan": 10},
+    {"id": "sw-f1", "kind": "switch", "label": "SW-F1", "x": 200, "y": 180, "ips": [], "vlan": null, "vlans": [10], "trunk_ports": ["eth0"]},
+    {"id": "sal1", "kind": "host", "label": "SAL1", "x": 500, "y": 80, "ips": ["10.0.20.21/24"], "vlan": 20},
+    {"id": "sal2", "kind": "host", "label": "SAL2", "x": 600, "y": 80, "ips": ["10.0.20.22/24"], "vlan": 20},
+    {"id": "sal3", "kind": "host", "label": "SAL3", "x": 700, "y": 80, "ips": ["10.0.20.23/24"], "vlan": 20},
+    {"id": "sw-f2", "kind": "switch", "label": "SW-F2", "x": 600, "y": 180, "ips": [], "vlan": null, "vlans": [20], "trunk_ports": ["eth0"]},
+    {"id": "dns", "kind": "host", "label": "DNS", "x": 850, "y": 80, "ips": ["10.0.30.2/24"], "vlan": 30, "services": ["dns"]},
+    {"id": "web", "kind": "host", "label": "WEB", "x": 950, "y": 80, "ips": ["10.0.30.3/24"], "vlan": 30, "services": ["http"]},
+    {"id": "sw-dmz", "kind": "switch", "label": "SW-DMZ", "x": 900, "y": 180, "ips": [], "vlan": null, "vlans": [30], "trunk_ports": ["eth0"]},
+    {"id": "r1", "kind": "router", "label": "R1-Core", "x": 350, "y": 320, "ips": ["10.0.10.1/24", "10.0.20.1/24", "10.0.30.1/24"], "vlan": null, "routes": [{"dest": "10.0.10.0/24", "via": "direct", "iface": "eth0"}, {"dest": "10.0.20.0/24", "via": "direct", "iface": "eth1"}, {"dest": "10.0.30.0/24", "via": "direct", "iface": "eth2"}, {"dest": "192.168.1.0/24", "via": "10.0.30.254", "iface": "eth2"}], "dhcp_pools": [{"vlan": 10, "range": ["10.0.10.100", "10.0.10.200"], "gateway": "10.0.10.1", "dns": "10.0.30.2"}, {"vlan": 20, "range": ["10.0.20.100", "10.0.20.200"], "gateway": "10.0.20.1", "dns": "10.0.30.2"}, {"vlan": 30, "range": ["10.0.30.100", "10.0.30.200"], "gateway": "10.0.30.1", "dns": "10.0.30.2"}]},
+    {"id": "r2", "kind": "router", "label": "R2-Edge", "x": 700, "y": 320, "ips": ["10.0.30.254/24", "192.168.1.1/24"], "vlan": null, "routes": [{"dest": "10.0.30.0/24", "via": "direct", "iface": "eth0"}, {"dest": "0.0.0.0/0", "via": "203.0.113.1", "iface": "eth1"}], "nat": {"type": "snat", "inside_ifaces": ["eth0"], "outside_iface": "eth1", "pool": ["192.168.1.100", "192.168.1.200"]}},
+    {"id": "dhcp", "kind": "host", "label": "DHCP", "x": 100, "y": 320, "ips": ["10.0.10.2/24", "10.0.20.2/24"], "vlan": null, "services": ["dhcp"]},
+    {"id": "inet", "kind": "host", "label": "Internet", "x": 700, "y": 480, "ips": ["203.0.113.1/24"], "vlan": null}
+  ],
+  "links": [
+    {"a": "eng1", "b": "sw-f1", "bandwidthKbps": 100000, "up": true},
+    {"a": "eng2", "b": "sw-f1", "bandwidthKbps": 100000, "up": true},
+    {"a": "eng3", "b": "sw-f1", "bandwidthKbps": 100000, "up": true},
+    {"a": "sw-f1", "b": "r1", "bandwidthKbps": 1000000, "up": true, "vlan_tag": "trunk"},
+    {"a": "sal1", "b": "sw-f2", "bandwidthKbps": 100000, "up": true},
+    {"a": "sal2", "b": "sw-f2", "bandwidthKbps": 100000, "up": true},
+    {"a": "sal3", "b": "sw-f2", "bandwidthKbps": 100000, "up": true},
+    {"a": "sw-f2", "b": "r1", "bandwidthKbps": 1000000, "up": true, "vlan_tag": "trunk"},
+    {"a": "dns", "b": "sw-dmz", "bandwidthKbps": 100000, "up": true},
+    {"a": "web", "b": "sw-dmz", "bandwidthKbps": 100000, "up": true},
+    {"a": "sw-dmz", "b": "r1", "bandwidthKbps": 1000000, "up": true, "vlan_tag": "trunk"},
+    {"a": "r1", "b": "r2", "bandwidthKbps": 1000000, "up": true},
+    {"a": "r2", "b": "inet", "bandwidthKbps": 1000000, "up": true},
+    {"a": "dhcp", "b": "r1", "bandwidthKbps": 100000, "up": true}
+  ],
+  "scenarios": [
+    {
+      "name": "Inter-VLAN + DNS",
+      "description": "ENG1 пингует SAL1, разрешая имя через DNS",
+      "actions": [{"type": "dns_query", "src": "eng1", "name": "web.local", "server": "dns"}, {"type": "ping", "src": "eng1", "dst": "sal1"}]
+    },
+    {
+      "name": "NAT + Internet access",
+      "description": "SAL2 выходит в Internet через R2 (SNAT)",
+      "actions": [{"type": "ping", "src": "sal2", "dst": "inet"}]
+    },
+    {
+      "name": "RIP convergence",
+      "description": "R1 и R2 обмениваются маршрутами через RIP",
+      "actions": [{"type": "link.set", "a": "r1", "b": "r2", "up": false}, {"type": "wait", "ticks": 60}, {"type": "link.set", "a": "r1", "b": "r2", "up": true}]
+    }
+  ]
+}
